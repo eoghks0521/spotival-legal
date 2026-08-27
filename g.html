@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>모임 초대</title></head>
+<body>
+<script>
+  const id = new URLSearchParams(location.search).get('id');
+  if (id) location.href = 'com.spotival.app://g/' + id;
+</script>
+<p>앱이 자동으로 열리지 않으면 아래를 눌러주세요.</p>
+<a href="https://play.google.com/store/apps/details?id=com.spotival.app">Android로 설치</a><br>
+<a href="https://apps.apple.com/kr/app/spotival/id6799099054">iOS로 설치</a>
+</body>
+</html>
