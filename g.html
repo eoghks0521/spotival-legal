@@ -3,29 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>모임 초대</title>
+<title>Spotival 모임 초대</title>
 <style>
   body { font-family: -apple-system, sans-serif; background:#0F1216; color:#E7E9EC;
          display:flex; flex-direction:column; align-items:center; justify-content:center;
          height:100vh; margin:0; padding:24px; text-align:center; box-sizing:border-box; }
+  img.logo { width:72px; height:72px; border-radius:18px; margin-bottom:16px; }
   a.btn { display:block; width:100%; max-width:320px; padding:14px; margin:8px 0;
           border-radius:12px; background:#3B82F6; color:#fff; text-decoration:none;
-          font-weight:700; font-size:16px; }
+          font-weight:700; font-size:16px; box-sizing:border-box; }
   a.store { background:#1A1E25; color:#B7BDC7; font-size:13px; font-weight:600; padding:10px; }
   p { color:#8A909B; font-size:13px; }
+  p.title { color:#E7E9EC; font-size:16px; font-weight:700; margin:0 0 4px; }
 </style>
 </head>
 <body>
-<p>Spotival 모임에 초대되었어요</p>
+<img class="logo" src="logo.png" alt="Spotival">
+<p class="title">Spotival</p>
+<p>모임에 초대되었어요</p>
 <a class="btn" id="openApp" href="#">모임 보러가기</a>
 <p style="margin-top:32px">앱이 없으면:</p>
 <a class="btn store" href="https://play.google.com/store/apps/details?id=com.spotival.app">Android로 설치</a>
 <a class="btn store" href="https://apps.apple.com/kr/app/spotival/id6799099054">iOS로 설치</a>
 <script>
-  // 카카오톡 인앱 브라우저는 JS location.href로 하는 커스텀 스킴 자동 리다이렉트를
-  // 자주 막는다 — 실제 사용자 탭(anchor 클릭)으로 열어야 훨씬 안정적으로 통과된다.
+  // 카카오톡 인앱 브라우저는 JS location.href로 하는 커스텀 스킴 자동
+  // 리다이렉트를 자주 막는다 -- 실제 사용자 탭(anchor 클릭)으로 열어야
+  // 훨씬 안정적으로 통과된다.
+  //
+  // 안드로이드는 한 술 더 떠서, 웹뷰(카톡 인앱브라우저 포함)가 앱이 등록
+  // 안 한 raw 커스텀 스킴(com.spotival.app://...)은 탭해도 그냥 무시하는
+  // 경우가 흔하다 -- 반면 intent:// URI는 안드로이드 웹뷰가 표준으로
+  // 인식해서 확실히 앱으로 넘겨준다(설치 안 됐으면 S.browser_fallback_url로
+  // 자동 이동). iOS는 그런 표준이 없어서 원래 커스텀 스킴을 그대로 쓴다.
   const id = new URLSearchParams(location.search).get('id');
-  if (id) document.getElementById('openApp').href = 'com.spotival.app://g/' + id;
+  const ua = navigator.userAgent || '';
+  const isAndroid = /Android/i.test(ua);
+  if (id) {
+    const link = document.getElementById('openApp');
+    if (isAndroid) {
+      const fallback = encodeURIComponent(
+        'https://play.google.com/store/apps/details?id=com.spotival.app');
+      link.href = 'intent://g/' + id +
+        '#Intent;scheme=com.spotival.app;package=com.spotival.app;' +
+        'S.browser_fallback_url=' + fallback + ';end';
+    } else {
+      link.href = 'com.spotival.app://g/' + id;
+    }
+  }
 </script>
 </body>
 </html>
